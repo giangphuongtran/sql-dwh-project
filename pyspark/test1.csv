@@ -1,4 +1,7 @@
-﻿Name;Age
-Krish;31
-Sudhanshu;30
-Sunny;29
+﻿Name;Age;Salary
+Krish;31;200000
+Sudhanshu;30;500000
+Sunny;29;
+Ama;37;40000
+Mi;25;150000
+;;6000000
