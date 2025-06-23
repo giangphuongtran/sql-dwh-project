@@ -1,0 +1,96 @@
+# docker-compose.yml
+
+services:
+  pgdatabase:
+    image: postgres:16
+    container_name: postgres_container
+    environment:
+      - POSTGRES_USER=dbadmin
+      - POSTGRES_PASSWORD=dbadminpw
+      - POSTGRES_DB=sqldatabase
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5433:5432" # Maps host port 5433 to container port 5432
+    networks:
+      - data-engineering
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_container
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin123
+    ports:
+      - "8080:80"
+    depends_on:
+      - pgdatabase
+    networks:
+      - data-engineering
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+  spark-etl:
+    build:
+      context: .  # Dockerfile is in the current directory
+    container_name: spark_etl_container
+    volumes:
+      # Mounts your local 'pyspark' folder to '/app' inside the container
+      - ./pyspark:/app # So etl_pyspark.py will be at /app/app/etl_pyspark.py
+      # Mounts your local 'projectFirst/datasets' folder to '/data' inside the container
+      - ./projectFirst/datasets:/data
+      # Mounts the PostgreSQL JDBC driver from your local project root to '/app/' inside the container
+      - ./postgresql-42.6.0.jar:/app/postgresql-42.6.0.jar
+    networks:
+      - data-engineering
+    environment:
+      # Environment variables for your Python script and Spark
+      - POSTGRES_USER=dbadmin
+      - POSTGRES_PASSWORD=dbadminpw
+      - POSTGRES_HOST=pgdatabase # Service name within Docker network, NOT localhost
+      - POSTGRES_PORT=5432      # Internal PostgreSQL container port, NOT 5433
+      - POSTGRES_DB=sqldatabase
+      - IVY_HOME=/tmp/.ivy2 # Ensure Spark's Ivy cache is in a writable location
+      - HOME=/tmp           # Set HOME for the container's user
+      - PYSPARK_PYTHON=python       # Ensure Spark uses the correct Python interpreter
+      - PYSPARK_DRIVER_PYTHON=python # Ensure Spark driver uses the correct Python interpreter
+      - HADOOP_USER_NAME=spark      # Provide a user name for Hadoop's UGI
+    depends_on:
+      - pgdatabase # Ensures pgdatabase starts before spark-etl
+
+    # --- This is the complete spark-submit command as the container's entrypoint ---
+    # The first item 'spark-submit' is the executable.
+    # All subsequent items are arguments to spark-submit.
+    entrypoint:
+      - spark-submit
+      - --master
+      - "local[*]" # Run Spark in local mode, using all available cores
+      - --jars
+      - /app/postgresql-42.6.0.jar # Path to the JDBC driver inside the container
+      - --conf
+      - spark.jars.ivy=/tmp/.ivy2 # Ensure Ivy cache is configured
+      - --conf
+      - spark.driver.extraJavaOptions=-Duser.name=spark -Duser.home=/tmp # Force Java user properties
+      - --conf
+      - spark.hadoop.security.authentication=simple # Explicitly use simple authentication
+      # Your PySpark application script and its arguments
+      - /app/etl_pyspark.py # Path to your Python script inside the container
+      - --user
+      - ${POSTGRES_USER}
+      - --password
+      - ${POSTGRES_PASSWORD}
+      - --host
+      - ${POSTGRES_HOST}
+      - --port
+      - "${POSTGRES_PORT}"
+      - --db
+      - ${POSTGRES_DB}
+      - --folder_path
+      - /data # Path to your mounted datasets inside the container
+      
+volumes:
+  pgdata: # Named volume for PostgreSQL data persistence
+  pgadmin_data: # Named volume for pgAdmin data persistence
+
+networks:
+  data-engineering: # Custom network for inter-service communication
