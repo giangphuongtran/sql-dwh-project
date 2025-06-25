@@ -1,0 +1,178 @@
+2025-06-26 01:14:24,292 | INFO | Starting ETL script.
+2025-06-26 01:14:24,292 | INFO | Environment variables loaded successfully.
+2025-06-26 01:14:24,292 | INFO | Attempting to connect to PostgreSQL at pgdatabase:5432/sqldatabase
+2025-06-26 01:14:24,339 | INFO | Schemas 'bronze' and 'silver' created (or already existed).
+2025-06-26 01:14:24,339 | INFO | JDBC driver found at /opt/jars/postgresql-42.6.0.jar.
+2025-06-26 01:14:24,340 | INFO | Spark temporary directory /tmp/spark-temp already exists.
+2025-06-26 01:14:24,340 | INFO | Spark temporary directory /tmp/spark-temp is writable.
+2025-06-26 01:14:27,793 | INFO | Spark Session created successfully.
+2025-06-26 01:14:27,794 | INFO | Spark Configurations (as seen by SparkContext):
+2025-06-26 01:14:27,805 | INFO |   spark.hadoop.fs.s3a.vectored.read.min.seek.size: 128K
+2025-06-26 01:14:27,805 | INFO |   spark.executor.extraJavaOptions: -Djava.net.preferIPv6Addresses=false -XX:+IgnoreUnrecognizedVMOptions --add-modules=jdk.incubator.vector --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED --add-opens=java.base/jdk.internal.ref=ALL-UNNAMED --add-opens=java.base/sun.nio.ch=ALL-UNNAMED --add-opens=java.base/sun.nio.cs=ALL-UNNAMED --add-opens=java.base/sun.security.action=ALL-UNNAMED --add-opens=java.base/sun.util.calendar=ALL-UNNAMED --add-opens=java.security.jgss/sun.security.krb5=ALL-UNNAMED -Djdk.reflect.useDirectMethodHandle=false -Dio.netty.tryReflectionSetAccessible=true -Djava.io.tmpdir=/tmp/spark-temp
+2025-06-26 01:14:27,806 | INFO |   spark.sql.artifact.isolation.enabled: false
+2025-06-26 01:14:27,806 | INFO |   spark.master: local[*]
+2025-06-26 01:14:27,807 | INFO |   spark.driver.port: 43017
+2025-06-26 01:14:27,807 | INFO |   spark.executor.id: driver
+2025-06-26 01:14:27,807 | INFO |   spark.app.name: ETL CSV to Postgres Local
+2025-06-26 01:14:27,808 | INFO |   spark.jars: /opt/jars/postgresql-42.6.0.jar
+2025-06-26 01:14:27,808 | INFO |   spark.submit.deployMode: client
+2025-06-26 01:14:27,808 | INFO |   spark.sql.session.local.dir: /tmp/spark-temp
+2025-06-26 01:14:27,808 | INFO |   spark.local.dir: /tmp/spark-temp
+2025-06-26 01:14:27,809 | INFO |   spark.serializer.objectStreamReset: 100
+2025-06-26 01:14:27,809 | INFO |   spark.ui.showConsoleProgress: true
+2025-06-26 01:14:27,809 | INFO |   spark.driver.extraJavaOptions: -Djava.net.preferIPv6Addresses=false -XX:+IgnoreUnrecognizedVMOptions --add-modules=jdk.incubator.vector --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED --add-opens=java.base/jdk.internal.ref=ALL-UNNAMED --add-opens=java.base/sun.nio.ch=ALL-UNNAMED --add-opens=java.base/sun.nio.cs=ALL-UNNAMED --add-opens=java.base/sun.security.action=ALL-UNNAMED --add-opens=java.base/sun.util.calendar=ALL-UNNAMED --add-opens=java.security.jgss/sun.security.krb5=ALL-UNNAMED -Djdk.reflect.useDirectMethodHandle=false -Dio.netty.tryReflectionSetAccessible=true -Djava.io.tmpdir=/tmp/spark-temp
+2025-06-26 01:14:27,809 | INFO |   spark.app.startTime: 1750875265857
+2025-06-26 01:14:27,809 | INFO |   spark.rdd.compress: True
+2025-06-26 01:14:27,809 | INFO |   spark.driver.host: a13a1775bf4a
+2025-06-26 01:14:27,810 | INFO |   spark.app.submitTime: 1750875265664
+2025-06-26 01:14:27,810 | INFO |   spark.sql.warehouse.dir: /tmp/spark-temp/spark-warehouse
+2025-06-26 01:14:27,811 | INFO |   spark.repl.local.jars: file:///opt/jars/postgresql-42.6.0.jar
+2025-06-26 01:14:27,812 | INFO |   spark.app.initial.jar.urls: spark://a13a1775bf4a:43017/jars/postgresql-42.6.0.jar
+2025-06-26 01:14:27,812 | INFO |   spark.submit.pyFiles: 
+2025-06-26 01:14:27,812 | INFO |   spark.hadoop.fs.s3a.vectored.read.max.merged.size: 2M
+2025-06-26 01:14:27,813 | INFO |   spark.app.id: local-1750875266310
+2025-06-26 01:14:27,813 | INFO | --- End Spark Configurations ---
+2025-06-26 01:14:27,813 | INFO | Starting CSV ingestion...
+2025-06-26 01:14:27,813 | INFO | Configured Host_datasets_path (inside container): /data/datasets
+2025-06-26 01:14:27,813 | INFO | Folders to process: ['source_crm', 'source_erp']
+2025-06-26 01:14:27,814 | INFO | 
+Processing folder: source_crm
+2025-06-26 01:14:27,814 | INFO | Full path for current folder: /data/datasets/source_crm
+2025-06-26 01:14:27,815 | INFO | Contents found in /data/datasets/source_crm: ['cust_info.csv', 'prd_info.csv', 'sales_details.csv']
+2025-06-26 01:14:27,815 | INFO | Attempting to process file: cust_info.csv
+2025-06-26 01:14:27,815 | INFO |     Recognized CSV file: /data/datasets/source_crm/cust_info.csv
+2025-06-26 01:14:27,816 | INFO |     Targeting database table: bronze.crm_cust_info
+2025-06-26 01:14:27,816 | INFO |     Attempting to read CSV file with Spark: /data/datasets/source_crm/cust_info.csv
+2025-06-26 01:14:29,855 | INFO |     Successfully read cust_info.csv. DataFrame schema inferred. (First 5 rows for quick check, avoid df.show() for large data):
+2025-06-26 01:14:29,855 | INFO |     Writing DataFrame to bronze.crm_cust_info (mode: overwrite)
+2025-06-26 01:14:30,722 | INFO |     Successfully ingested cust_info.csv to bronze.crm_cust_info
+2025-06-26 01:14:30,722 | INFO | Attempting to process file: prd_info.csv
+2025-06-26 01:14:30,722 | INFO |     Recognized CSV file: /data/datasets/source_crm/prd_info.csv
+2025-06-26 01:14:30,723 | INFO |     Targeting database table: bronze.crm_prd_info
+2025-06-26 01:14:30,723 | INFO |     Attempting to read CSV file with Spark: /data/datasets/source_crm/prd_info.csv
+2025-06-26 01:14:30,909 | INFO |     Successfully read prd_info.csv. DataFrame schema inferred. (First 5 rows for quick check, avoid df.show() for large data):
+2025-06-26 01:14:30,910 | INFO |     Writing DataFrame to bronze.crm_prd_info (mode: overwrite)
+2025-06-26 01:14:31,081 | INFO |     Successfully ingested prd_info.csv to bronze.crm_prd_info
+2025-06-26 01:14:31,081 | INFO | Attempting to process file: sales_details.csv
+2025-06-26 01:14:31,081 | INFO |     Recognized CSV file: /data/datasets/source_crm/sales_details.csv
+2025-06-26 01:14:31,081 | INFO |     Targeting database table: bronze.crm_sales_details
+2025-06-26 01:14:31,081 | INFO |     Attempting to read CSV file with Spark: /data/datasets/source_crm/sales_details.csv
+2025-06-26 01:14:31,392 | INFO |     Successfully read sales_details.csv. DataFrame schema inferred. (First 5 rows for quick check, avoid df.show() for large data):
+2025-06-26 01:14:31,392 | INFO |     Writing DataFrame to bronze.crm_sales_details (mode: overwrite)
+2025-06-26 01:14:32,023 | INFO |     Successfully ingested sales_details.csv to bronze.crm_sales_details
+2025-06-26 01:14:32,024 | INFO | 
+Processing folder: source_erp
+2025-06-26 01:14:32,024 | INFO | Full path for current folder: /data/datasets/source_erp
+2025-06-26 01:14:32,025 | INFO | Contents found in /data/datasets/source_erp: ['CUST_AZ12.csv', 'LOC_A101.csv', 'PX_CAT_G1V2.csv']
+2025-06-26 01:14:32,025 | INFO | Attempting to process file: CUST_AZ12.csv
+2025-06-26 01:14:32,025 | INFO |     Recognized CSV file: /data/datasets/source_erp/CUST_AZ12.csv
+2025-06-26 01:14:32,025 | INFO |     Targeting database table: bronze.erp_cust_info
+2025-06-26 01:14:32,025 | INFO |     Attempting to read CSV file with Spark: /data/datasets/source_erp/CUST_AZ12.csv
+2025-06-26 01:14:32,162 | INFO |     Successfully read CUST_AZ12.csv. DataFrame schema inferred. (First 5 rows for quick check, avoid df.show() for large data):
+2025-06-26 01:14:32,163 | INFO |     Writing DataFrame to bronze.erp_cust_info (mode: overwrite)
+2025-06-26 01:14:32,388 | INFO |     Successfully ingested CUST_AZ12.csv to bronze.erp_cust_info
+2025-06-26 01:14:32,388 | INFO | Attempting to process file: LOC_A101.csv
+2025-06-26 01:14:32,388 | INFO |     Recognized CSV file: /data/datasets/source_erp/LOC_A101.csv
+2025-06-26 01:14:32,388 | INFO |     Targeting database table: bronze.erp_loc_info
+2025-06-26 01:14:32,388 | INFO |     Attempting to read CSV file with Spark: /data/datasets/source_erp/LOC_A101.csv
+2025-06-26 01:14:32,491 | INFO |     Successfully read LOC_A101.csv. DataFrame schema inferred. (First 5 rows for quick check, avoid df.show() for large data):
+2025-06-26 01:14:32,491 | INFO |     Writing DataFrame to bronze.erp_loc_info (mode: overwrite)
+2025-06-26 01:14:32,714 | INFO |     Successfully ingested LOC_A101.csv to bronze.erp_loc_info
+2025-06-26 01:14:32,715 | INFO | Attempting to process file: PX_CAT_G1V2.csv
+2025-06-26 01:14:32,715 | INFO |     Recognized CSV file: /data/datasets/source_erp/PX_CAT_G1V2.csv
+2025-06-26 01:14:32,715 | INFO |     Targeting database table: bronze.erp_px_cat
+2025-06-26 01:14:32,715 | INFO |     Attempting to read CSV file with Spark: /data/datasets/source_erp/PX_CAT_G1V2.csv
+2025-06-26 01:14:32,799 | INFO |     Successfully read PX_CAT_G1V2.csv. DataFrame schema inferred. (First 5 rows for quick check, avoid df.show() for large data):
+2025-06-26 01:14:32,800 | INFO |     Writing DataFrame to bronze.erp_px_cat (mode: overwrite)
+2025-06-26 01:14:32,898 | INFO |     Successfully ingested PX_CAT_G1V2.csv to bronze.erp_px_cat
+2025-06-26 01:14:32,898 | INFO | All CSVs ingestion process completed (check database for actual data).
+2025-06-26 01:14:33,093 | INFO | Spark Session stopped.
+2025-06-26 01:18:56,404 | INFO | Starting ETL script.
+2025-06-26 01:18:56,406 | INFO | Environment variables loaded successfully.
+2025-06-26 01:18:56,406 | INFO | Attempting to connect to PostgreSQL at pgdatabase:5432/sqldatabase
+2025-06-26 01:18:56,439 | INFO | Schemas 'bronze' and 'silver' created (or already existed).
+2025-06-26 01:18:56,439 | INFO | JDBC driver found at /opt/jars/postgresql-42.6.0.jar.
+2025-06-26 01:18:56,439 | INFO | Spark temporary directory /tmp/spark-temp already exists.
+2025-06-26 01:18:56,440 | INFO | Spark temporary directory /tmp/spark-temp is writable.
+2025-06-26 01:18:59,781 | INFO | Spark Session created successfully.
+2025-06-26 01:18:59,782 | INFO | Spark Configurations (as seen by SparkContext):
+2025-06-26 01:18:59,795 | INFO |   spark.app.startTime: 1750875537850
+2025-06-26 01:18:59,795 | INFO |   spark.hadoop.fs.s3a.vectored.read.min.seek.size: 128K
+2025-06-26 01:18:59,796 | INFO |   spark.executor.extraJavaOptions: -Djava.net.preferIPv6Addresses=false -XX:+IgnoreUnrecognizedVMOptions --add-modules=jdk.incubator.vector --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED --add-opens=java.base/jdk.internal.ref=ALL-UNNAMED --add-opens=java.base/sun.nio.ch=ALL-UNNAMED --add-opens=java.base/sun.nio.cs=ALL-UNNAMED --add-opens=java.base/sun.security.action=ALL-UNNAMED --add-opens=java.base/sun.util.calendar=ALL-UNNAMED --add-opens=java.security.jgss/sun.security.krb5=ALL-UNNAMED -Djdk.reflect.useDirectMethodHandle=false -Dio.netty.tryReflectionSetAccessible=true -Djava.io.tmpdir=/tmp/spark-temp
+2025-06-26 01:18:59,796 | INFO |   spark.app.initial.jar.urls: spark://cfe2a5196132:39679/jars/postgresql-42.6.0.jar
+2025-06-26 01:18:59,796 | INFO |   spark.sql.artifact.isolation.enabled: false
+2025-06-26 01:18:59,797 | INFO |   spark.master: local[*]
+2025-06-26 01:18:59,797 | INFO |   spark.executor.id: driver
+2025-06-26 01:18:59,797 | INFO |   spark.driver.host: cfe2a5196132
+2025-06-26 01:18:59,797 | INFO |   spark.app.name: ETL CSV to Postgres Local
+2025-06-26 01:18:59,798 | INFO |   spark.jars: /opt/jars/postgresql-42.6.0.jar
+2025-06-26 01:18:59,798 | INFO |   spark.submit.deployMode: client
+2025-06-26 01:18:59,798 | INFO |   spark.sql.session.local.dir: /tmp/spark-temp
+2025-06-26 01:18:59,798 | INFO |   spark.local.dir: /tmp/spark-temp
+2025-06-26 01:18:59,799 | INFO |   spark.serializer.objectStreamReset: 100
+2025-06-26 01:18:59,799 | INFO |   spark.app.submitTime: 1750875537684
+2025-06-26 01:18:59,800 | INFO |   spark.ui.showConsoleProgress: true
+2025-06-26 01:18:59,800 | INFO |   spark.driver.extraJavaOptions: -Djava.net.preferIPv6Addresses=false -XX:+IgnoreUnrecognizedVMOptions --add-modules=jdk.incubator.vector --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED --add-opens=java.base/jdk.internal.ref=ALL-UNNAMED --add-opens=java.base/sun.nio.ch=ALL-UNNAMED --add-opens=java.base/sun.nio.cs=ALL-UNNAMED --add-opens=java.base/sun.security.action=ALL-UNNAMED --add-opens=java.base/sun.util.calendar=ALL-UNNAMED --add-opens=java.security.jgss/sun.security.krb5=ALL-UNNAMED -Djdk.reflect.useDirectMethodHandle=false -Dio.netty.tryReflectionSetAccessible=true -Djava.io.tmpdir=/tmp/spark-temp
+2025-06-26 01:18:59,800 | INFO |   spark.driver.port: 39679
+2025-06-26 01:18:59,801 | INFO |   spark.rdd.compress: True
+2025-06-26 01:18:59,801 | INFO |   spark.sql.warehouse.dir: /tmp/spark-temp/spark-warehouse
+2025-06-26 01:18:59,801 | INFO |   spark.repl.local.jars: file:///opt/jars/postgresql-42.6.0.jar
+2025-06-26 01:18:59,802 | INFO |   spark.submit.pyFiles: 
+2025-06-26 01:18:59,802 | INFO |   spark.hadoop.fs.s3a.vectored.read.max.merged.size: 2M
+2025-06-26 01:18:59,802 | INFO |   spark.app.id: local-1750875538306
+2025-06-26 01:18:59,802 | INFO | --- End Spark Configurations ---
+2025-06-26 01:18:59,802 | INFO | Starting CSV ingestion...
+2025-06-26 01:18:59,803 | INFO | Configured Host_datasets_path (inside container): /data/datasets
+2025-06-26 01:18:59,803 | INFO | Folders to process: ['source_crm', 'source_erp']
+2025-06-26 01:18:59,803 | INFO | 
+Processing folder: source_crm
+2025-06-26 01:18:59,803 | INFO | Full path for current folder: /data/datasets/source_crm
+2025-06-26 01:18:59,806 | INFO | Contents found in /data/datasets/source_crm: ['cust_info.csv', 'prd_info.csv', 'sales_details.csv']
+2025-06-26 01:18:59,806 | INFO | Attempting to process file: cust_info.csv
+2025-06-26 01:18:59,806 | INFO |     Recognized CSV file: /data/datasets/source_crm/cust_info.csv
+2025-06-26 01:18:59,807 | INFO |     Targeting database table: bronze.crm_cust_info
+2025-06-26 01:18:59,807 | INFO |     Attempting to read CSV file with Spark: /data/datasets/source_crm/cust_info.csv
+2025-06-26 01:19:01,911 | INFO |     Successfully read cust_info.csv.
+2025-06-26 01:19:01,915 | INFO |     Writing DataFrame to bronze.crm_cust_info (mode: overwrite)
+2025-06-26 01:19:02,833 | INFO |     Successfully ingested cust_info.csv to bronze.crm_cust_info
+2025-06-26 01:19:02,833 | INFO | Attempting to process file: prd_info.csv
+2025-06-26 01:19:02,834 | INFO |     Recognized CSV file: /data/datasets/source_crm/prd_info.csv
+2025-06-26 01:19:02,834 | INFO |     Targeting database table: bronze.crm_prd_info
+2025-06-26 01:19:02,834 | INFO |     Attempting to read CSV file with Spark: /data/datasets/source_crm/prd_info.csv
+2025-06-26 01:19:03,014 | INFO |     Successfully read prd_info.csv.
+2025-06-26 01:19:03,014 | INFO |     Writing DataFrame to bronze.crm_prd_info (mode: overwrite)
+2025-06-26 01:19:03,213 | INFO |     Successfully ingested prd_info.csv to bronze.crm_prd_info
+2025-06-26 01:19:03,213 | INFO | Attempting to process file: sales_details.csv
+2025-06-26 01:19:03,213 | INFO |     Recognized CSV file: /data/datasets/source_crm/sales_details.csv
+2025-06-26 01:19:03,214 | INFO |     Targeting database table: bronze.crm_sales_details
+2025-06-26 01:19:03,214 | INFO |     Attempting to read CSV file with Spark: /data/datasets/source_crm/sales_details.csv
+2025-06-26 01:19:03,472 | INFO |     Successfully read sales_details.csv.
+2025-06-26 01:19:03,472 | INFO |     Writing DataFrame to bronze.crm_sales_details (mode: overwrite)
+2025-06-26 01:19:04,080 | INFO |     Successfully ingested sales_details.csv to bronze.crm_sales_details
+2025-06-26 01:19:04,081 | INFO | 
+Processing folder: source_erp
+2025-06-26 01:19:04,081 | INFO | Full path for current folder: /data/datasets/source_erp
+2025-06-26 01:19:04,082 | INFO | Contents found in /data/datasets/source_erp: ['CUST_AZ12.csv', 'LOC_A101.csv', 'PX_CAT_G1V2.csv']
+2025-06-26 01:19:04,082 | INFO | Attempting to process file: CUST_AZ12.csv
+2025-06-26 01:19:04,082 | INFO |     Recognized CSV file: /data/datasets/source_erp/CUST_AZ12.csv
+2025-06-26 01:19:04,082 | INFO |     Targeting database table: bronze.erp_cust_info
+2025-06-26 01:19:04,083 | INFO |     Attempting to read CSV file with Spark: /data/datasets/source_erp/CUST_AZ12.csv
+2025-06-26 01:19:04,246 | INFO |     Successfully read CUST_AZ12.csv.
+2025-06-26 01:19:04,247 | INFO |     Writing DataFrame to bronze.erp_cust_info (mode: overwrite)
+2025-06-26 01:19:04,519 | INFO |     Successfully ingested CUST_AZ12.csv to bronze.erp_cust_info
+2025-06-26 01:19:04,520 | INFO | Attempting to process file: LOC_A101.csv
+2025-06-26 01:19:04,520 | INFO |     Recognized CSV file: /data/datasets/source_erp/LOC_A101.csv
+2025-06-26 01:19:04,520 | INFO |     Targeting database table: bronze.erp_loc_info
+2025-06-26 01:19:04,521 | INFO |     Attempting to read CSV file with Spark: /data/datasets/source_erp/LOC_A101.csv
+2025-06-26 01:19:04,640 | INFO |     Successfully read LOC_A101.csv.
+2025-06-26 01:19:04,640 | INFO |     Writing DataFrame to bronze.erp_loc_info (mode: overwrite)
+2025-06-26 01:19:04,824 | INFO |     Successfully ingested LOC_A101.csv to bronze.erp_loc_info
+2025-06-26 01:19:04,825 | INFO | Attempting to process file: PX_CAT_G1V2.csv
+2025-06-26 01:19:04,825 | INFO |     Recognized CSV file: /data/datasets/source_erp/PX_CAT_G1V2.csv
+2025-06-26 01:19:04,825 | INFO |     Targeting database table: bronze.erp_px_cat
+2025-06-26 01:19:04,825 | INFO |     Attempting to read CSV file with Spark: /data/datasets/source_erp/PX_CAT_G1V2.csv
+2025-06-26 01:19:04,944 | INFO |     Successfully read PX_CAT_G1V2.csv.
+2025-06-26 01:19:04,944 | INFO |     Writing DataFrame to bronze.erp_px_cat (mode: overwrite)
+2025-06-26 01:19:05,035 | INFO |     Successfully ingested PX_CAT_G1V2.csv to bronze.erp_px_cat
+2025-06-26 01:19:05,035 | INFO | All CSVs ingestion process completed (check database for actual data).
+2025-06-26 01:19:05,093 | INFO | Spark Session stopped.
