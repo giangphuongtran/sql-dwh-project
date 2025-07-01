@@ -1,5 +1,6 @@
 import os
 from pyspark.sql import SparkSession
+from pyspark.sql.functions import current_date, input_file_name
 from sqlalchemy import create_engine
 import sqlalchemy
 import logging
@@ -49,6 +50,11 @@ else:
 
 logging.getLogger("py4j").setLevel(logging.ERROR) # Suppress noisy py4j logs
 
+run_ingest = os.getenv("RUN_INGEST", "false").lower() == "true"
+if not run_ingest:
+    log.info("RUN_INGEST is false. Skipping ingestion.")
+    exit(0)
+    
 log.info("Starting ETL script.")
 
 # --- Load environment variables ---
@@ -185,6 +191,8 @@ for folder in folders:
                 # Add a log right before reading the CSV
                 log.info(f"    Attempting to read CSV file with Spark: {file_path}")
                 df = spark.read.option("header", "true").option("inferSchema", "true").csv(file_path)
+                df = df.withColumn("import_date", current_date()) \
+                    .withColumn("source_file", input_file_name()    )
                 log.info(f"    Successfully read {file}.")
                 # df.show(5, truncate=False) # Uncomment for quick data preview, but can be slow for very wide tables
 
@@ -208,6 +216,43 @@ for folder in folders:
             log.info(f"    Skipping file '{file}' - not a recognized CSV or not in map.")
 
 log.info('All CSVs ingestion process completed (check database for actual data).')
+
+log.info("Starting to create empty tables in 'silver' schema...")
+
+for file, table in file_table_map.items():
+    bronze_table = f"bronze.{table}"
+    silver_table = f"silver.{table}"
+
+    try:
+        log.info(f"Reading schema from {bronze_table}...")
+        df_bronze = spark.read \
+            .format("jdbc") \
+            .option("url", jdbc_url) \
+            .option("dbtable", bronze_table) \
+            .option("user", user) \
+            .option("password", password) \
+            .option("driver", "org.postgresql.Driver") \
+            .load()
+            
+        columns_to_remove = ["import_date", "source_file"]
+        
+        df_silver = df_bronze.drop(*columns_to_remove) \
+            .withColumn("updated_dttm", current_date())
+
+        log.info(f"Writing empty table {silver_table} with structure only...")
+        df_silver.limit(0).write \
+            .format("jdbc") \
+            .option("url", jdbc_url) \
+            .option("dbtable", silver_table) \
+            .option("user", user) \
+            .option("password", password) \
+            .option("driver", "org.postgresql.Driver") \
+            .mode("overwrite") \
+            .save()
+        
+        log.info(f"Empty table created: {silver_table}")
+    except Exception as e:
+        log.error(f"Error creating table {silver_table}: {e}", exc_info=True)
 
 # Stop Spark Session for clean shutdown
 try:
