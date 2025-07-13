@@ -14,8 +14,9 @@ CREATE TABLE silver.erp_cust_info (
     bdate DATE,
     gen TEXT,
     updated_dttm DATE NOT NULL DEFAULT current_date,
-    CONSTRAINT pk_erp_cust PRIMARY KEY (cid),
-    CONSTRAINT fk_erp_cid FOREIGN KEY (cid) REFERENCES silver.erp_loc_info (cid)
+    CONSTRAINT pk_erp_cust PRIMARY KEY (cid)
+--    ,
+--    CONSTRAINT fk_erp_cid FOREIGN KEY (cid) REFERENCES silver.erp_loc_info (cid)
 );
 
 -- silver.erp_px_cat
@@ -41,8 +42,9 @@ CREATE TABLE silver.crm_prd_info (
     prd_start_dt DATE,
     prd_end_dt DATE,
     updated_dttm DATE NOT NULL DEFAULT current_date,
-    CONSTRAINT pk_crm_prd PRIMARY KEY (prd_id),
-    CONSTRAINT fk_cat_id FOREIGN KEY (cat_id) REFERENCES silver.erp_px_cat (id)
+    CONSTRAINT pk_crm_prd PRIMARY KEY (prd_id)
+--    ,
+--    CONSTRAINT fk_cat_id FOREIGN KEY (cat_id) REFERENCES silver.erp_px_cat (id)
 );
 
 -- silver.crm_cust_info
@@ -56,9 +58,10 @@ CREATE TABLE silver.crm_cust_info (
     cst_gndr TEXT,
     cst_create_date DATE,
     updated_dttm DATE NOT NULL DEFAULT current_date,
-    CONSTRAINT pk_crm_cust PRIMARY KEY (cst_id),
-    CONSTRAINT fk_cust_loc FOREIGN KEY (cst_key) REFERENCES silver.erp_loc_info (cid),
-    CONSTRAINT fk_cust_cid FOREIGN KEY (cst_key) REFERENCES silver.erp_cust_info (cid)
+    CONSTRAINT pk_crm_cust PRIMARY KEY (cst_id)
+--    ,
+--    CONSTRAINT fk_cust_loc FOREIGN KEY (cst_key) REFERENCES silver.erp_loc_info (cid),
+--    CONSTRAINT fk_cust_cid FOREIGN KEY (cst_key) REFERENCES silver.erp_cust_info (cid)
 );
 
 -- silver.crm_sales_details
@@ -67,14 +70,14 @@ CREATE TABLE silver.crm_sales_details (
     sls_ord_num TEXT NOT NULL,
     sls_prd_key TEXT,
     sls_cust_id INT,
-    sls_order_dt INT,
-    sls_ship_dt INT,
-    sls_due_dt INT,
+    sls_order_dt date,
+    sls_ship_dt date,
+    sls_due_dt date,
     sls_sales INT,
     sls_quantity INT,
     sls_price INT,
     updated_dttm DATE NOT NULL DEFAULT current_date,
-    CONSTRAINT pk_sls_id PRIMARY KEY (sls_ord_num),
-    CONSTRAINT fk_sales_cust FOREIGN KEY (sls_cust_id) REFERENCES silver.crm_cust_info (cst_id),
-    CONSTRAINT fk_sales_prd FOREIGN KEY (sls_prd_key) REFERENCES silver.crm_prd_info (prd_key)
+    CONSTRAINT pk_sls_details PRIMARY KEY (sls_ord_num, sls_prd_key)
+--    ,
+--    CONSTRAINT fk_sales_cust FOREIGN KEY (sls_cust_id) REFERENCES silver.crm_cust_info (cst_id)
 );

@@ -35,7 +35,7 @@ services:
     depends_on:
       - pgdatabase
     volumes:
-      - ./projectFirst/datasets:/data/datasets
+      - ./datasets:/data/datasets
       - ./logs:/logs
       - ./spark-temp:/tmp/spark-temp 
     environment:
