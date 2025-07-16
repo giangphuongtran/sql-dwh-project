@@ -11,44 +11,45 @@ import shutil # Imported for potential future use or manual cleanup, not directl
 os.environ['TZ'] = 'Asia/Ho_Chi_Minh'
 time.tzset()
 
+# Ensure the logs directory exists within the container
+def setup_logging(log_file_path, log_level=logging.INFO):
+
+    log_dir = os.path.dirname(log_file_path)
+    handlers = []
+
+    if log_dir:
+        try:
+            os.makedirs(log_dir, exist_ok=True)
+            handlers.append(logging.FileHandler(log_file_path))
+        except OSError as e:
+            print(f"Warning: Failed to created log directory '{log_dir}': {e}")
+            print("Falling back to console-only logging.")
+
+    handlers.append(logging.StreamHandler())
+
+    logging.basicConfig(
+        level=log_level,
+        format='%(asctime)s | %(levelname)s | %(message)s',
+        handlers=handlers,
+        force=True
+    )
+
+    logger = logging.getLogger()
+
+    # Log initialization
+    if len(handlers) > 1:
+        logger.info(f"Logger initialized with file logging to: {log_file_path}")
+    else:
+        logger.info("Logger initialized with console logging only")
+
+    # Suppress noisy Spark gateway logs
+    logging.getLogger("py4j").setLevel(logging.ERROR)
+    
+    return logger
+
 # --- Setup Logging ---
 log_file_path = "/logs/etl.log"
-# Ensure the logs directory exists within the container
-log_dir = os.path.dirname(log_file_path)
-if not os.path.exists(log_dir):
-    try:
-        os.makedirs(log_dir)
-        logging.basicConfig(
-            level=logging.INFO,
-            format='%(asctime)s | %(levelname)s | %(message)s',
-            handlers=[
-                logging.FileHandler(log_file_path),
-                logging.StreamHandler()
-            ]
-        )
-        log = logging.getLogger()
-        log.info(f"Created log directory: {log_dir}")
-    except OSError as e:
-        # Fallback to console only if log directory cannot be created
-        logging.basicConfig(
-            level=logging.INFO,
-            format='%(asctime)s | %(levelname)s | %(message)s',
-            handlers=[logging.StreamHandler()]
-        )
-        log = logging.getLogger()
-        log.error(f"Failed to create log directory {log_dir}: {e}. Logging to console only.")
-else:
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s | %(levelname)s | %(message)s',
-        handlers=[
-            logging.FileHandler(log_file_path),
-            logging.StreamHandler()
-        ]
-    )
-    log = logging.getLogger()
-
-logging.getLogger("py4j").setLevel(logging.ERROR) # Suppress noisy py4j logs
+log = setup_logging(log_file_path)
 
 run_ingest = os.getenv("RUN_INGEST", "false").lower() == "true"
 if not run_ingest:
