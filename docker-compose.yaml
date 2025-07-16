@@ -10,6 +10,7 @@ services:
       - POSTGRES_DB=sqldatabase
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./sql/init/:/docker-entrypoint-initdb.d/
     ports:
       - "5433:5432" # Maps host port 5433 to container port 5432
     networks:
@@ -37,7 +38,8 @@ services:
     volumes:
       - ./datasets:/data/datasets
       - ./logs:/logs
-      - ./spark-temp:/tmp/spark-temp 
+      - ./spark-temp:/tmp/spark-temp
+      - ./config:/app/config
     environment:
       - PYSPARK_PYTHON=python3
     command: ["python", "etl.py"]

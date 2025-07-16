@@ -1,0 +1,5 @@
+{
+    "temp_dir": "/tmp/spark-temp",
+    "jdbc_driver_path": "/opt/jars/postgresql-42.6.0.jar",
+    "host_datasets_path": "/data/datasets"
+}
