@@ -3,34 +3,34 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
     -- erp_px_cat: duplicate ID
-    INSERT INTO monitoring.data_validation_logs (table_name, record_key, column_name, error_reason, detected_at)
-    SELECT 'erp_px_cat', "ID", 'id', 'Duplicate ID', current_timestamp
+    INSERT INTO monitoring.data_validation_logs (table_name, record_key, column_name, error_reason)
+    SELECT 'erp_px_cat', "ID", 'id', 'Duplicate ID'
     FROM bronze.erp_px_cat
     GROUP BY "ID"
     HAVING COUNT(*) > 1;
 
     -- erp_px_cat: Nulls or dirty text
-    INSERT INTO monitoring.data_validation_logs (table_name, record_key, column_name, error_reason, detected_at)
-    SELECT 'erp_px_cat', "ID", col, err, current_timestamp
+    INSERT INTO monitoring.data_validation_logs (table_name, record_key, column_name, error_reason)
+    SELECT 'erp_px_cat', "ID", col, err
     FROM bronze.erp_px_cat,
          LATERAL (
             VALUES
-                ("CAT", CASE WHEN "CAT" IS NULL THEN 'NULL' WHEN "CAT" <> TRIM("CAT") THEN 'Trim error' END),
-                ("SUBCAT", CASE WHEN "SUBCAT" IS NULL THEN 'NULL' WHEN "SUBCAT" <> TRIM("SUBCAT") THEN 'Trim error' END),
-                ("MAINTENANCE", CASE WHEN "MAINTENANCE" IS NULL THEN 'NULL' WHEN "MAINTENANCE" <> TRIM("MAINTENANCE") THEN 'Trim error' END)
+                ('CAT', CASE WHEN "CAT" IS NULL THEN 'NULL' WHEN "CAT" <> TRIM("CAT") THEN 'Trim error' END),
+                ('SUBCAT', CASE WHEN "SUBCAT" IS NULL THEN 'NULL' WHEN "SUBCAT" <> TRIM("SUBCAT") THEN 'Trim error' END),
+                ('MAINTENANCE', CASE WHEN "MAINTENANCE" IS NULL THEN 'NULL' WHEN "MAINTENANCE" <> TRIM("MAINTENANCE") THEN 'Trim error' END)
          ) AS issues(col, err)
     WHERE err IS NOT NULL;
 
     -- crm_cust_info: duplicate or null ID
-    INSERT INTO monitoring.data_validation_logs (table_name, record_key, column_name, error_reason, detected_at)
-    SELECT 'crm_cust_info', CAST(cst_id AS TEXT), 'cst_id', 'Duplicate or NULL ID', current_timestamp
+    INSERT INTO monitoring.data_validation_logs (table_name, record_key, column_name, error_reason)
+    SELECT 'crm_cust_info', CAST(cst_id AS TEXT), 'cst_id', 'Duplicate or NULL ID'
     FROM bronze.crm_cust_info
     GROUP BY cst_id
     HAVING COUNT(*) > 1 OR cst_id IS NULL;
 
     -- crm_cust_info: dirty first name
-    INSERT INTO monitoring.data_validation_logs (table_name, record_key, column_name, error_reason, detected_at)
-    SELECT 'crm_cust_info', CAST(cst_id AS TEXT), 'cst_firstname', 'Untrimmed first name', current_timestamp
+    INSERT INTO monitoring.data_validation_logs (table_name, record_key, column_name, error_reason)
+    SELECT 'crm_cust_info', CAST(cst_id AS TEXT), 'cst_firstname', 'Untrimmed first name'
     FROM bronze.crm_cust_info
     WHERE cst_firstname <> TRIM(cst_firstname);
 

@@ -1,32 +1,58 @@
+-- Procedure to load erp_px_cat
 CREATE OR REPLACE PROCEDURE silver.insert_erp_px_cat()
 LANGUAGE plpgsql
 AS $$
+DECLARE
+    v_start_time TIMESTAMP := clock_timestamp();
+    v_end_time TIMESTAMP;
+    v_rows_inserted INTEGER;
 BEGIN
     BEGIN
+        -- Clear target table before load
         TRUNCATE TABLE silver.erp_px_cat;
+
+        -- Insert only valid records
         INSERT INTO silver.erp_px_cat (id, cat, subcat, maintenance)
         SELECT
             REPLACE("ID", '_', '-') AS id,
             TRIM("CAT"),
             TRIM("SUBCAT"),
             TRIM("MAINTENANCE")
-        FROM bronze.erp_px_cat;
+        FROM bronze.erp_px_cat
+        WHERE REPLACE("ID", '_', '-') NOT IN (
+            SELECT record_key
+            FROM monitoring.data_validation_logs
+            WHERE table_name = 'erp_px_cat'
+        );
+
+        GET DIAGNOSTICS v_rows_inserted = ROW_COUNT;
+        v_end_time := clock_timestamp();
+
+        -- Success log
+        INSERT INTO silver.load_log(table_name, load_status, load_time, load_start_time, load_end_time, rows_loaded)
+        VALUES ('erp_px_cat', 'SUCCESS', v_end_time - v_start_time, v_start_time, v_end_time, v_rows_inserted);
+
     EXCEPTION WHEN OTHERS THEN
-        INSERT INTO silver.load_log(table_name, load_status, error_message)
-        VALUES ('erp_px_cat', 'FAIL', SQLERRM);
+        v_end_time := clock_timestamp();
+        INSERT INTO silver.load_log(table_name, load_status, load_time, load_start_time, load_end_time, rows_loaded, error_message)
+        VALUES ('erp_px_cat', 'FAIL', v_end_time - v_start_time, v_start_time, v_end_time, 0, SQLERRM);
         RETURN;
     END;
-    INSERT INTO silver.load_log(table_name, load_status)
-    VALUES ('erp_px_cat', 'SUCCESS');
 END;
 $$;
 
+-- Procedure to load erp_loc_info
 CREATE OR REPLACE PROCEDURE silver.insert_erp_loc_info()
 LANGUAGE plpgsql
 AS $$
+DECLARE
+    v_start_time TIMESTAMP := clock_timestamp();
+    v_end_time TIMESTAMP;
+    v_rows_inserted INTEGER;
 BEGIN
     BEGIN
         TRUNCATE TABLE silver.erp_loc_info;
+
         INSERT INTO silver.erp_loc_info (cid, cntry)
         SELECT
             REPLACE("CID", '-', '') AS cid,
@@ -37,22 +63,34 @@ BEGIN
                 ELSE TRIM("CNTRY")
             END AS cntry
         FROM bronze.erp_loc_info;
+
+        GET DIAGNOSTICS v_rows_inserted = ROW_COUNT;
+        v_end_time := clock_timestamp();
+
+        INSERT INTO silver.load_log(table_name, load_status, load_time, load_start_time, load_end_time, rows_loaded)
+        VALUES ('erp_loc_info', 'SUCCESS', v_end_time - v_start_time, v_start_time, v_end_time, v_rows_inserted);
+
     EXCEPTION WHEN OTHERS THEN
-        INSERT INTO silver.load_log(table_name, load_status, error_message)
-        VALUES ('erp_loc_info', 'FAIL', SQLERRM);
+        v_end_time := clock_timestamp();
+        INSERT INTO silver.load_log(table_name, load_status, load_time, load_start_time, load_end_time, rows_loaded, error_message)
+        VALUES ('erp_loc_info', 'FAIL', v_end_time - v_start_time, v_start_time, v_end_time, 0, SQLERRM);
         RETURN;
     END;
-    INSERT INTO silver.load_log(table_name, load_status)
-    VALUES ('erp_loc_info', 'SUCCESS');
 END;
 $$;
 
+-- Procedure to load erp_cust_info
 CREATE OR REPLACE PROCEDURE silver.insert_erp_cust_info()
 LANGUAGE plpgsql
 AS $$
+DECLARE
+    v_start_time TIMESTAMP := clock_timestamp();
+    v_end_time TIMESTAMP;
+    v_rows_inserted INTEGER;
 BEGIN
     BEGIN
         TRUNCATE TABLE silver.erp_cust_info;
+
         INSERT INTO silver.erp_cust_info (cid, bdate, gen)
         SELECT
             CASE
@@ -67,145 +105,173 @@ BEGIN
             END AS gen
         FROM bronze.erp_cust_info
         WHERE "BDATE" < CURRENT_DATE;
+
+        GET DIAGNOSTICS v_rows_inserted = ROW_COUNT;
+        v_end_time := clock_timestamp();
+
+        INSERT INTO silver.load_log(table_name, load_status, load_time, load_start_time, load_end_time, rows_loaded)
+        VALUES ('erp_cust_info', 'SUCCESS', v_end_time - v_start_time, v_start_time, v_end_time, v_rows_inserted);
+
     EXCEPTION WHEN OTHERS THEN
-        INSERT INTO silver.load_log(table_name, load_status, error_message)
-        VALUES ('erp_cust_info', 'FAIL', SQLERRM);
+        v_end_time := clock_timestamp();
+        INSERT INTO silver.load_log(table_name, load_status, load_time, load_start_time, load_end_time, rows_loaded, error_message)
+        VALUES ('erp_cust_info', 'FAIL', v_end_time - v_start_time, v_start_time, v_end_time, 0, SQLERRM);
         RETURN;
     END;
-    INSERT INTO silver.load_log(table_name, load_status)
-    VALUES ('erp_cust_info', 'SUCCESS');
 END;
 $$;
 
+-- Procedure to load crm_cust_info
 CREATE OR REPLACE PROCEDURE silver.insert_crm_cust_info()
 LANGUAGE plpgsql
 AS $$
+DECLARE
+    v_start_time TIMESTAMP := clock_timestamp();
+    v_end_time TIMESTAMP;
+    v_rows_inserted INTEGER;
 BEGIN
     BEGIN
         TRUNCATE TABLE silver.crm_cust_info;
-        INSERT INTO silver.crm_cust_info (
-            cst_id, cst_key, cst_firstname, cst_lastname,
-            cst_marital_status, cst_gndr, cst_create_date
-        )
+
+        INSERT INTO silver.crm_cust_info (cst_id, cst_key, cst_firstname, cst_lastname, cst_marital_status, cst_gndr, cst_create_date)
         SELECT
             a.cst_id,
             a.cst_key,
             TRIM(a.cst_firstname),
             TRIM(a.cst_lastname),
-            CASE
-                WHEN UPPER(TRIM(a.cst_marital_status)) = 'S' THEN 'Single'
-                WHEN UPPER(TRIM(a.cst_marital_status)) = 'M' THEN 'Married'
-                ELSE 'N/A'
-            END,
-            CASE
-                WHEN UPPER(TRIM(a.cst_gndr)) = 'F' THEN 'Female'
-                WHEN UPPER(TRIM(a.cst_gndr)) = 'M' THEN 'Male'
-                ELSE 'N/A'
-            END,
+            CASE WHEN UPPER(TRIM(a.cst_marital_status)) = 'S' THEN 'Single'
+                 WHEN UPPER(TRIM(a.cst_marital_status)) = 'M' THEN 'Married'
+                 ELSE 'N/A' END,
+            CASE WHEN UPPER(TRIM(a.cst_gndr)) = 'F' THEN 'Female'
+                 WHEN UPPER(TRIM(a.cst_gndr)) = 'M' THEN 'Male'
+                 ELSE 'N/A' END,
             a.cst_create_date
         FROM (
             SELECT *
             FROM (
-                SELECT *,
-                       ROW_NUMBER() OVER(PARTITION BY cst_id ORDER BY cst_create_date DESC) AS FLAG_LATEST
+                SELECT *, ROW_NUMBER() OVER (PARTITION BY cst_id ORDER BY cst_create_date DESC) AS rn
                 FROM bronze.crm_cust_info
             ) sub
-            WHERE FLAG_LATEST = 1
-              AND cst_id IS NOT NULL
+            WHERE rn = 1 AND cst_id IS NOT NULL
         ) a
-        JOIN silver.erp_cust_info ec ON a.cst_key = ec.cid
-        JOIN silver.erp_loc_info el ON a.cst_key = el.cid;
+        JOIN silver.erp_loc_info l ON a.cst_key = l.cid
+        JOIN silver.erp_cust_info c ON a.cst_key = c.cid
+        WHERE a.cst_key NOT IN (
+            SELECT record_key
+            FROM monitoring.data_validation_logs
+            WHERE table_name = 'crm_cust_info'
+            and record_key is not NULL
+        );
+
+        GET DIAGNOSTICS v_rows_inserted = ROW_COUNT;
+        v_end_time := clock_timestamp();
+
+        INSERT INTO silver.load_log(table_name, load_status, load_time, load_start_time, load_end_time, rows_loaded)
+        VALUES ('crm_cust_info', 'SUCCESS', v_end_time - v_start_time, v_start_time, v_end_time, v_rows_inserted);
+
     EXCEPTION WHEN OTHERS THEN
-        INSERT INTO silver.load_log(table_name, load_status, error_message)
-        VALUES ('crm_cust_info', 'FAIL', SQLERRM);
+        v_end_time := clock_timestamp();
+        INSERT INTO silver.load_log(table_name, load_status, load_time, load_start_time, load_end_time, rows_loaded, error_message)
+        VALUES ('crm_cust_info', 'FAIL', v_end_time - v_start_time, v_start_time, v_end_time, 0, SQLERRM);
         RETURN;
     END;
-    INSERT INTO silver.load_log(table_name, load_status)
-    VALUES ('crm_cust_info', 'SUCCESS');
 END;
 $$;
 
+-- Procedure to load crm_prd_info
 CREATE OR REPLACE PROCEDURE silver.insert_crm_prd_info()
 LANGUAGE plpgsql
 AS $$
+DECLARE
+    v_start_time TIMESTAMP := clock_timestamp();
+    v_end_time TIMESTAMP;
+    v_rows_inserted INTEGER;
 BEGIN
     BEGIN
         TRUNCATE TABLE silver.crm_prd_info;
-        INSERT INTO silver.crm_prd_info (
-            prd_id, cat_id, prd_key, prd_nm,
-            prd_cost, prd_line, prd_start_dt, prd_end_dt
-        )
+
+        INSERT INTO silver.crm_prd_info (prd_id, cat_id, prd_key, prd_nm, prd_cost, prd_line, prd_start_dt, prd_end_dt)
         SELECT
             prd_id,
-            SUBSTR(prd_key, 1, 5) AS cat_id,
-            SUBSTR(prd_key, 7, LENGTH(prd_key)) AS prd_key,
+            SUBSTR(prd_key, 1, 5),
+            SUBSTR(prd_key, 7),
             prd_nm,
             COALESCE(prd_cost, 0),
-            CASE
-                WHEN UPPER(TRIM(prd_line)) = 'M' THEN 'Mountain'
-                WHEN UPPER(TRIM(prd_line)) = 'R' THEN 'Road'
-                WHEN UPPER(TRIM(prd_line)) = 'S' THEN 'Other Sales'
-                WHEN UPPER(TRIM(prd_line)) = 'T' THEN 'Touring'
+            CASE UPPER(TRIM(prd_line))
+                WHEN 'M' THEN 'Mountain'
+                WHEN 'R' THEN 'Road'
+                WHEN 'S' THEN 'Other Sales'
+                WHEN 'T' THEN 'Touring'
                 ELSE 'N/A'
-            END AS prd_line,
+            END,
             CAST(prd_start_dt AS DATE),
             CAST(LEAD(prd_start_dt) OVER (PARTITION BY prd_key ORDER BY prd_start_dt) - 1 AS DATE)
         FROM bronze.crm_prd_info
-        WHERE prd_id IS NOT NULL
-          AND SUBSTR(prd_key, 1, 5) IN (
-              SELECT REPLACE(id, '_', '-') FROM silver.erp_px_cat
-          );
+        WHERE SUBSTR(prd_key, 1, 5) NOT IN (
+            SELECT record_key
+            FROM monitoring.data_validation_logs
+            WHERE table_name = 'crm_prd_info'
+        );
+
+        GET DIAGNOSTICS v_rows_inserted = ROW_COUNT;
+        v_end_time := clock_timestamp();
+
+        INSERT INTO silver.load_log(table_name, load_status, load_time, load_start_time, load_end_time, rows_loaded)
+        VALUES ('crm_prd_info', 'SUCCESS', v_end_time - v_start_time, v_start_time, v_end_time, v_rows_inserted);
+
     EXCEPTION WHEN OTHERS THEN
-        INSERT INTO silver.load_log(table_name, load_status, error_message)
-        VALUES ('crm_prd_info', 'FAIL', SQLERRM);
+        v_end_time := clock_timestamp();
+        INSERT INTO silver.load_log(table_name, load_status, load_time, load_start_time, load_end_time, rows_loaded, error_message)
+        VALUES ('crm_prd_info', 'FAIL', v_end_time - v_start_time, v_start_time, v_end_time, 0, SQLERRM);
         RETURN;
     END;
-    INSERT INTO silver.load_log(table_name, load_status)
-    VALUES ('crm_prd_info', 'SUCCESS');
 END;
 $$;
 
+-- Procedure to load crm_sales_details
 CREATE OR REPLACE PROCEDURE silver.insert_crm_sales_details()
 LANGUAGE plpgsql
 AS $$
+DECLARE
+    v_start_time TIMESTAMP := clock_timestamp();
+    v_end_time TIMESTAMP;
+    v_rows_inserted INTEGER;
 BEGIN
     BEGIN
         TRUNCATE TABLE silver.crm_sales_details;
+
         INSERT INTO silver.crm_sales_details (
-            sls_ord_num, sls_prd_key, sls_cust_id,
-            sls_order_dt, sls_ship_dt, sls_due_dt,
-            sls_sales, sls_quantity, sls_price
+            sls_ord_num, sls_prd_key, sls_cust_id, sls_order_dt,
+            sls_ship_dt, sls_due_dt, sls_sales, sls_quantity, sls_price
         )
         SELECT DISTINCT
-            sd.sls_ord_num,
-            sd.sls_prd_key,
-            sd.sls_cust_id,
-            CASE WHEN sd.sls_order_dt = 0 OR LENGTH(CAST(sd.sls_order_dt AS VARCHAR)) <> 8 THEN NULL
-                 ELSE CAST(CAST(sd.sls_order_dt AS VARCHAR) AS DATE) END,
-            CASE WHEN sd.sls_ship_dt = 0 OR LENGTH(CAST(sd.sls_ship_dt AS VARCHAR)) <> 8 THEN NULL
-                 ELSE CAST(CAST(sd.sls_ship_dt AS VARCHAR) AS DATE) END,
-            CASE WHEN sd.sls_due_dt = 0 OR LENGTH(CAST(sd.sls_due_dt AS VARCHAR)) <> 8 THEN NULL
-                 ELSE CAST(CAST(sd.sls_due_dt AS VARCHAR) AS DATE) END,
-            CASE WHEN sd.sls_sales <= 0 OR sd.sls_sales IS NULL
-                      OR sd.sls_sales <> sd.sls_quantity * ABS(sd.sls_price)
-                 THEN sd.sls_quantity * ABS(sd.sls_price)
-                 ELSE sd.sls_sales END,
-            sd.sls_quantity,
-            CASE WHEN sd.sls_price <= 0 OR sd.sls_price IS NULL
-                 THEN sd.sls_sales / NULLIF(sd.sls_quantity, 0)
-                 ELSE sd.sls_price END
-        FROM bronze.crm_sales_details sd
-        JOIN silver.crm_cust_info ci ON sd.sls_cust_id = ci.cst_id
-        WHERE NOT EXISTS (
-            SELECT 1 FROM silver.crm_sales_details s
-            WHERE s.sls_ord_num = sd.sls_ord_num AND s.sls_prd_key = sd.sls_prd_key
+            sls_ord_num,
+            sls_prd_key,
+            sls_cust_id,
+            CASE WHEN sls_order_dt = 0 OR LENGTH(CAST(sls_order_dt AS TEXT)) <> 8 THEN NULL ELSE TO_DATE(CAST(sls_order_dt AS TEXT), 'YYYYMMDD') END,
+            CASE WHEN sls_ship_dt = 0 OR LENGTH(CAST(sls_ship_dt AS TEXT)) <> 8 THEN NULL ELSE TO_DATE(CAST(sls_ship_dt AS TEXT), 'YYYYMMDD') END,
+            CASE WHEN sls_due_dt = 0 OR LENGTH(CAST(sls_due_dt AS TEXT)) <> 8 THEN NULL ELSE TO_DATE(CAST(sls_due_dt AS TEXT), 'YYYYMMDD') END,
+            CASE WHEN sls_sales <= 0 OR sls_sales IS NULL OR sls_sales <> sls_quantity * ABS(sls_price) THEN sls_quantity * ABS(sls_price) ELSE sls_sales END,
+            sls_quantity,
+            CASE WHEN sls_price <= 0 OR sls_price IS NULL THEN sls_sales / NULLIF(sls_quantity, 0) ELSE sls_price END
+        FROM bronze.crm_sales_details
+        WHERE sls_ord_num NOT IN (
+            SELECT record_key
+            FROM monitoring.data_validation_logs
+            WHERE table_name = 'crm_sales_details'
         );
+
+        GET DIAGNOSTICS v_rows_inserted = ROW_COUNT;
+        v_end_time := clock_timestamp();
+
+        INSERT INTO silver.load_log(table_name, load_status, load_time, load_start_time, load_end_time, rows_loaded)
+        VALUES ('crm_sales_details', 'SUCCESS', v_end_time - v_start_time, v_start_time, v_end_time, v_rows_inserted);
+
     EXCEPTION WHEN OTHERS THEN
-        INSERT INTO silver.load_log(table_name, load_status, error_message)
-        VALUES ('crm_sales_details', 'FAIL', SQLERRM);
+        v_end_time := clock_timestamp();
+        INSERT INTO silver.load_log(table_name, load_status, load_time, load_start_time, load_end_time, rows_loaded, error_message)
+        VALUES ('crm_sales_details', 'FAIL', v_end_time - v_start_time, v_start_time, v_end_time, 0, SQLERRM);
         RETURN;
     END;
-    INSERT INTO silver.load_log(table_name, load_status)
-    VALUES ('crm_sales_details', 'SUCCESS');
 END;
 $$;

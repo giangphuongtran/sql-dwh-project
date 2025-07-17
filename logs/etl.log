@@ -64,3 +64,66 @@ Processing folder: source_erp
 2025-07-17 00:58:19,556 | INFO |      Successfully ingested PX_CAT_G1V2.csv to bronze.erp_px_cat
 2025-07-17 00:58:19,557 | INFO | All CSVs ingestion process completed (check database for actual data).
 2025-07-17 00:58:19,706 | INFO | Spark Session stopped.
+2025-07-17 23:26:55,215 | INFO | Logger initialized with file logging to: /logs/etl.log
+2025-07-17 23:26:55,215 | INFO | Starting ETL script.
+2025-07-17 23:26:55,215 | INFO | Environment variables loaded successfully.
+2025-07-17 23:26:55,216 | INFO | JDBC driver found at /opt/jars/postgresql-42.6.0.jar
+2025-07-17 23:26:55,216 | INFO | Spark temporary directory /tmp/spark-temp already exists.
+2025-07-17 23:26:55,217 | INFO | Spark temporary directory /tmp/spark-temp is writable
+2025-07-17 23:26:59,502 | INFO | Spark Session created successfully.
+2025-07-17 23:26:59,502 | INFO | --- End Set up configurations. ---
+2025-07-17 23:26:59,502 | INFO | Starting CSV ingestion...
+2025-07-17 23:26:59,502 | INFO | Configured Host_datasets_path (inside container): /data/datasets
+2025-07-17 23:26:59,502 | INFO | Folders to process: ['source_crm', 'source_erp']
+2025-07-17 23:26:59,503 | INFO | 
+Processing folder: source_crm
+2025-07-17 23:26:59,503 | INFO | Full path for current folder: /data/datasets/source_crm
+2025-07-17 23:26:59,504 | INFO | Contents found in /data/datasets/source_crm: ['cust_info.csv', 'prd_info.csv', 'sales_details.csv']
+2025-07-17 23:26:59,504 | INFO | Attempting to process file: cust_info.csv
+2025-07-17 23:26:59,504 | INFO |      Recognized CSV file: /data/datasets/source_crm/cust_info.csv
+2025-07-17 23:26:59,504 | INFO |      Targeting database table: bronze.crm_cust_info
+2025-07-17 23:26:59,504 | INFO |      Attempting to read CSV file with Spark: /data/datasets/source_crm/cust_info.csv
+2025-07-17 23:27:01,631 | INFO |      Successfully read cust_info.csv.
+2025-07-17 23:27:01,632 | INFO |      Writing DataFrame to bronze.crm_cust_info (mode: overwrite)
+2025-07-17 23:27:02,590 | INFO |      Successfully ingested cust_info.csv to bronze.crm_cust_info
+2025-07-17 23:27:02,591 | INFO | Attempting to process file: prd_info.csv
+2025-07-17 23:27:02,591 | INFO |      Recognized CSV file: /data/datasets/source_crm/prd_info.csv
+2025-07-17 23:27:02,591 | INFO |      Targeting database table: bronze.crm_prd_info
+2025-07-17 23:27:02,591 | INFO |      Attempting to read CSV file with Spark: /data/datasets/source_crm/prd_info.csv
+2025-07-17 23:27:02,835 | INFO |      Successfully read prd_info.csv.
+2025-07-17 23:27:02,835 | INFO |      Writing DataFrame to bronze.crm_prd_info (mode: overwrite)
+2025-07-17 23:27:03,062 | INFO |      Successfully ingested prd_info.csv to bronze.crm_prd_info
+2025-07-17 23:27:03,062 | INFO | Attempting to process file: sales_details.csv
+2025-07-17 23:27:03,062 | INFO |      Recognized CSV file: /data/datasets/source_crm/sales_details.csv
+2025-07-17 23:27:03,063 | INFO |      Targeting database table: bronze.crm_sales_details
+2025-07-17 23:27:03,063 | INFO |      Attempting to read CSV file with Spark: /data/datasets/source_crm/sales_details.csv
+2025-07-17 23:27:03,375 | INFO |      Successfully read sales_details.csv.
+2025-07-17 23:27:03,375 | INFO |      Writing DataFrame to bronze.crm_sales_details (mode: overwrite)
+2025-07-17 23:27:04,142 | INFO |      Successfully ingested sales_details.csv to bronze.crm_sales_details
+2025-07-17 23:27:04,142 | INFO | 
+Processing folder: source_erp
+2025-07-17 23:27:04,142 | INFO | Full path for current folder: /data/datasets/source_erp
+2025-07-17 23:27:04,143 | INFO | Contents found in /data/datasets/source_erp: ['CUST_AZ12.csv', 'LOC_A101.csv', 'PX_CAT_G1V2.csv']
+2025-07-17 23:27:04,143 | INFO | Attempting to process file: CUST_AZ12.csv
+2025-07-17 23:27:04,144 | INFO |      Recognized CSV file: /data/datasets/source_erp/CUST_AZ12.csv
+2025-07-17 23:27:04,144 | INFO |      Targeting database table: bronze.erp_cust_info
+2025-07-17 23:27:04,144 | INFO |      Attempting to read CSV file with Spark: /data/datasets/source_erp/CUST_AZ12.csv
+2025-07-17 23:27:04,375 | INFO |      Successfully read CUST_AZ12.csv.
+2025-07-17 23:27:04,378 | INFO |      Writing DataFrame to bronze.erp_cust_info (mode: overwrite)
+2025-07-17 23:27:04,684 | INFO |      Successfully ingested CUST_AZ12.csv to bronze.erp_cust_info
+2025-07-17 23:27:04,684 | INFO | Attempting to process file: LOC_A101.csv
+2025-07-17 23:27:04,685 | INFO |      Recognized CSV file: /data/datasets/source_erp/LOC_A101.csv
+2025-07-17 23:27:04,685 | INFO |      Targeting database table: bronze.erp_loc_info
+2025-07-17 23:27:04,686 | INFO |      Attempting to read CSV file with Spark: /data/datasets/source_erp/LOC_A101.csv
+2025-07-17 23:27:04,814 | INFO |      Successfully read LOC_A101.csv.
+2025-07-17 23:27:04,814 | INFO |      Writing DataFrame to bronze.erp_loc_info (mode: overwrite)
+2025-07-17 23:27:05,046 | INFO |      Successfully ingested LOC_A101.csv to bronze.erp_loc_info
+2025-07-17 23:27:05,046 | INFO | Attempting to process file: PX_CAT_G1V2.csv
+2025-07-17 23:27:05,046 | INFO |      Recognized CSV file: /data/datasets/source_erp/PX_CAT_G1V2.csv
+2025-07-17 23:27:05,046 | INFO |      Targeting database table: bronze.erp_px_cat
+2025-07-17 23:27:05,046 | INFO |      Attempting to read CSV file with Spark: /data/datasets/source_erp/PX_CAT_G1V2.csv
+2025-07-17 23:27:05,170 | INFO |      Successfully read PX_CAT_G1V2.csv.
+2025-07-17 23:27:05,170 | INFO |      Writing DataFrame to bronze.erp_px_cat (mode: overwrite)
+2025-07-17 23:27:05,283 | INFO |      Successfully ingested PX_CAT_G1V2.csv to bronze.erp_px_cat
+2025-07-17 23:27:05,283 | INFO | All CSVs ingestion process completed (check database for actual data).
+2025-07-17 23:27:05,554 | INFO | Spark Session stopped.
