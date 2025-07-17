@@ -1,12 +1,13 @@
--- 00_setup_monitoring.sql
 -- Create schema and log table to track data validation errors
 CREATE SCHEMA IF NOT EXISTS monitoring;
 
 CREATE TABLE IF NOT EXISTS monitoring.data_validation_logs (
     log_id SERIAL PRIMARY KEY,
-    check_name TEXT,
-    issue_details TEXT,
-    failed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    table_name TEXT NOT NULL,
+    record_key TEXT NOT NULL,
+    column_name TEXT NOT NULL,
+    error_reason TEXT,
+    detected_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS silver.load_log (
