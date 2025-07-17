@@ -15,9 +15,9 @@ BEGIN
     FROM bronze.erp_px_cat,
          LATERAL (
             VALUES
-                ('cat', CASE WHEN "CAT" IS NULL THEN 'NULL' WHEN "CAT" <> TRIM("CAT") THEN 'Trim error' END),
-                ('subcat', CASE WHEN "SUBCAT" IS NULL THEN 'NULL' WHEN "SUBCAT" <> TRIM("SUBCAT") THEN 'Trim error' END),
-                ('maintenance', CASE WHEN "MAINTENANCE" IS NULL THEN 'NULL' WHEN "MAINTENANCE" <> TRIM("MAINTENANCE") THEN 'Trim error' END)
+                ("CAT", CASE WHEN "CAT" IS NULL THEN 'NULL' WHEN "CAT" <> TRIM("CAT") THEN 'Trim error' END),
+                ("SUBCAT", CASE WHEN "SUBCAT" IS NULL THEN 'NULL' WHEN "SUBCAT" <> TRIM("SUBCAT") THEN 'Trim error' END),
+                ("MAINTENANCE", CASE WHEN "MAINTENANCE" IS NULL THEN 'NULL' WHEN "MAINTENANCE" <> TRIM("MAINTENANCE") THEN 'Trim error' END)
          ) AS issues(col, err)
     WHERE err IS NOT NULL;
 
