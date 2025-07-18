@@ -82,10 +82,14 @@ The project includes all stages of a modern data pipeline: from **requirement an
 - Goal: Auditable, traceable raw data snapshot
 
 ### 🥈 Silver Layer
-- Stored procedures clean and standardize bronze data
-- `03_create_load_procedures.sql` transforms and inserts into silver tables
+- Stored procedures first **insert data from Bronze** into Silver tables
+- After insertion, **validation logic is applied**:
+  - Detect nulls or duplicates in primary keys
+  - Check for invalid or inconsistent values
+  - Identify transformation or enrichment issues
 - Logs quality issues and failed rows into `load_log`
-- `05_run_pipeline.sql` executes the full silver loading process
+- All transformations are still handled (cleaning, standardizing, enriching)
+- `03_create_load_procedures.sql` and `05_run_pipeline.sql` handle loading and validation
 
 ### 🥇 Gold Layer
 - Business objects created via SQL Views

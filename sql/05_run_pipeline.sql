@@ -10,3 +10,6 @@ CALL silver.insert_erp_cust_info();
 CALL silver.insert_crm_cust_info();
 CALL silver.insert_crm_prd_info();
 CALL silver.insert_crm_sales_details();
+
+-- Step 3: Validate after insert
+CALL monitoring.validate_silver_layer();

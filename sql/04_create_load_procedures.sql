@@ -101,6 +101,7 @@ BEGIN
             CASE
                 WHEN UPPER(TRIM("GEN")) IN ('F', 'FEMALE') THEN 'Female'
                 WHEN UPPER(TRIM("GEN")) IN ('M', 'MALE') THEN 'Male'
+				WHEN "GEN" IS NULL THEN NULL
                 ELSE 'N/A'
             END AS gen
         FROM bronze.erp_cust_info
@@ -141,9 +142,11 @@ BEGIN
             TRIM(a.cst_lastname),
             CASE WHEN UPPER(TRIM(a.cst_marital_status)) = 'S' THEN 'Single'
                  WHEN UPPER(TRIM(a.cst_marital_status)) = 'M' THEN 'Married'
+				 WHEN a.cst_marital_status IS NULL THEN NULL
                  ELSE 'N/A' END,
             CASE WHEN UPPER(TRIM(a.cst_gndr)) = 'F' THEN 'Female'
                  WHEN UPPER(TRIM(a.cst_gndr)) = 'M' THEN 'Male'
+				 WHEN a.cst_gndr IS NULL THEN NULL
                  ELSE 'N/A' END,
             a.cst_create_date
         FROM (
