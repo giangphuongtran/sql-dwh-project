@@ -129,3 +129,5 @@ Processing folder: source_erp
 2025-07-17 23:27:05,554 | INFO | Spark Session stopped.
 2025-07-18 21:52:11,055 | INFO | Logger initialized with file logging to: /logs/etl.log
 2025-07-18 21:52:11,056 | INFO | RUN_INGEST is false. Skipping ingestion.
+2025-07-19 22:47:58,682 | INFO | Logger initialized with file logging to: /logs/etl.log
+2025-07-19 22:47:58,683 | INFO | RUN_INGEST is false. Skipping ingestion.
