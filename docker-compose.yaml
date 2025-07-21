@@ -37,8 +37,8 @@ services:
       - pgdatabase
     volumes:
       - ./datasets:/data/datasets
-      - ./logs:/logs
-      - ./spark-temp:/tmp/spark-temp
+      - ./runtime/logs:/logs
+      - ./runtime/spark-temp:/tmp/spark-temp
       - ./config:/app/config
     environment:
       - PYSPARK_PYTHON=python3

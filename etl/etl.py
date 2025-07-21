@@ -56,7 +56,7 @@ def setup_logging(log_file_path, log_level=logging.INFO):
     return logger
 
 # --- Setup Logging ---
-log_file_path = "/logs/etl.log"
+log_file_path = "/runtime/logs/etl.log"
 log = setup_logging(log_file_path)
 
 # --- Check for ingestion toggle ---

@@ -2,6 +2,8 @@
 
 # Ignore virtual environment
 .de-projects/
+.env
+.venv
 
 # Python cache
 __pycache__/
@@ -16,5 +18,5 @@ __pycache__/
 # Mac system files
 .DS_Store
 
-.env
-.venv
+# Runtime folder
+runtime/

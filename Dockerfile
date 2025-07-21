@@ -9,7 +9,7 @@ WORKDIR /app
 COPY etl/etl.py /app/etl.py
 
 # Copy the JDBC driver
-COPY jars/postgresql-42.6.0.jar /opt/jars/postgresql-42.6.0.jar
+COPY runtime/jars/postgresql-42.6.0.jar /opt/jars/postgresql-42.6.0.jar
 
 # Ensure JAVA_TOOL_OPTIONS is set for all JVM processes to use /tmp/spark-temp
 ENV JAVA_TOOL_OPTIONS="-Djava.io.tmpdir=/tmp/spark-temp"
