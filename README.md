@@ -115,12 +115,13 @@ Inspired by the excellent [sql-data-warehouse-project](https://github.com/DataWi
 
 ## 📒 Documentation
 
-- 📐 [docs/images/data_architecture.png](docs/images/data_architecture.png)
-- 🔁 [docs/images/data_flow.png](docs/images/data_flow.png)
-- ⭐ [docs/images/data_model.png](docs/images/data_model.png)
-- 📘 [docs/data_catalog.md](docs/data_catalog.md)
-- 🧾 [docs/naming_convention.md](docs/naming_convention.md)
-
+| File                          | Description                                                                 |
+|-------------------------------|-----------------------------------------------------------------------------|
+| [`data_architecture.png`](docs/images/data_architecture.png) | High-level system architecture showing source ingestion, Spark, and PostgreSQL layers |
+| [`data_flow.png`](docs/images/data_flow.png)               | ETL pipeline flow across Bronze → Silver → Gold                           |
+| [`data_model.png`](docs/images/data_model.png)             | Star schema of Gold layer with dimensions and fact table                  |
+| [`data_catalog.md`](docs/data_catalog.md)                  | Definitions and metadata of Gold tables: fields, types, and descriptions |
+| [`naming_convention.md`](docs/naming_convention.md)        | Standard rules for table, column, and file naming across all layers      |
 ---
 
 ## 📌 Design Assumptions
@@ -142,6 +143,9 @@ To get started:
 ```bash
 # Create your local .env file from the template
 cp .env.example .env
+# Open your .env and enter your credentials
+```
+
 
 ## 🏁 Getting Started
 
@@ -162,3 +166,4 @@ psql -f sql/silver/02_run_silver_pipeline.sql
 # Create Gold Layer
 psql -f sql/gold/00_create_gold_views.sql
 psql -f sql/gold/01_create_indexes.sql
+```
