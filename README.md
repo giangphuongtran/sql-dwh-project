@@ -12,8 +12,8 @@ Inspired by the excellent [sql-data-warehouse-project](https://github.com/DataWi
 |--------------------|----------------------------------|-----------------------------------------------|
 | 💻 Runtime          | SQL-only, manual execution       | Automated with **PySpark + Docker**           |
 | 🔄 Load Method      | SQL scripts only                | **PySpark ETL scripts** with modular control  |
-| 🧪 Validation       | Basic checks on Bronze          | **Post-load validations in Silver**, error logs |
-| 📊 Modeling         | Basic views                     | **Star schema modeling** in Gold layer with Materialized views and indexes for query performance        |
+| 🧪 Validation       | Basic checks on Bronze          | **Post-load validations** in Silver, error logs |
+| 📊 Modeling         | Basic views                     | **Star schema modeling** in Gold layer with **Materialized views** and indexes for query performance        |
 | 🐳 Environment      | Microsoft SQL only      | Full **Docker Compose** with Spark and Postgres |
 
 ---
