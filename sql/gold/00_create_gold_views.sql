@@ -8,7 +8,7 @@ SELECT
 	, CASE
 		WHEN cci.cst_gndr IS NOT NULL THEN cci.cst_gndr
 		WHEN cci.cst_gndr IS NULL
-		OR cci.cst_gndr = 'n/a' THEN COALESCE(eci.gen, 'n/a')
+		OR cci.cst_gndr = 'N/A' THEN COALESCE(eci.gen, 'N/A')
 	END AS gender
 	, eli.cntry AS country
 	, eci.bdate AS birth_date

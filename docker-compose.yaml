@@ -40,6 +40,7 @@ services:
       - ./runtime/logs:/logs
       - ./runtime/spark-temp:/tmp/spark-temp
       - ./config:/app/config
+      # - ./jars:/opt/jars
     environment:
       - PYSPARK_PYTHON=python3
     command: ["python", "etl.py"]

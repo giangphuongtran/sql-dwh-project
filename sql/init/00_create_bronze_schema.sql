@@ -1,7 +1,5 @@
--- Create all layers of the Medallion architecture
+-- Create the first layer of the Medallion architecture
 CREATE SCHEMA IF NOT EXISTS bronze;
-CREATE SCHEMA IF NOT EXISTS silver;
-CREATE SCHEMA IF NOT EXISTS gold;
 
 -- bronze.crm_cust_info definition
 

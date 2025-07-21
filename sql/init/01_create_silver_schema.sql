@@ -1,3 +1,6 @@
+-- Create the second layer of the Medallion architecture
+CREATE SCHEMA IF NOT EXISTS silver;
+
 -- silver.erp_loc_info
 DROP TABLE IF EXISTS silver.erp_loc_info CASCADE;
 CREATE TABLE silver.erp_loc_info (
@@ -80,4 +83,15 @@ CREATE TABLE silver.crm_sales_details (
     CONSTRAINT pk_sls_details PRIMARY KEY (sls_ord_num, sls_prd_key)
 --    ,
 --    CONSTRAINT fk_sales_cust FOREIGN KEY (sls_cust_id) REFERENCES silver.crm_cust_info (cst_id)
+);
+
+CREATE TABLE IF NOT EXISTS silver.load_log (
+    log_id SERIAL PRIMARY KEY,
+    table_name TEXT NOT NULL,
+    load_status TEXT NOT NULL CHECK (load_status IN ('SUCCESS', 'FAIL')),
+    load_time INTERVAL,
+    load_start_time TIMESTAMP NOT null,
+    load_end_time TIMESTAMP NOT null,
+    rows_loaded INT,
+    error_message TEXT
 );
