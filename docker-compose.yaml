@@ -4,10 +4,8 @@ services:
   pgdatabase:
     image: postgres:16
     container_name: postgres_container
-    environment:
-      - POSTGRES_USER=dbadmin
-      - POSTGRES_PASSWORD=dbadminpw
-      - POSTGRES_DB=sqldatabase
+    env_file:
+      - .env
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./sql/init/:/docker-entrypoint-initdb.d/
@@ -20,8 +18,8 @@ services:
     image: dpage/pgadmin4
     container_name: pgadmin_container
     environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
-      - PGADMIN_DEFAULT_PASSWORD=admin123
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
     ports:
       - "8080:80"
     depends_on:

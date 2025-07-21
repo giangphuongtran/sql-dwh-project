@@ -2,19 +2,45 @@
 
 This repository contains a complete **data pipeline** built on the **Medallion Architecture** to process raw CRM and ERP datasets into clean, business-ready analytics views using PostgreSQL and PySpark.
 
-The project includes all stages of a modern data pipeline: from **requirement analysis**, **data architecture design**, **data ingestion**, **cleansing**, to **data modeling for analytics**. The design emphasizes traceability, maintainability, and modularity.
+Inspired by the excellent [sql-data-warehouse-project](https://github.com/DataWithBaraa/sql-data-warehouse-project), this repo has been restructured and extended to reflect more real-world practice, automation, and validation.
 
 ---
 
-## 📐 Architecture Overview
+## 🆕 What’s Upgraded From Original
 
-### Medallion Layers
+| Area               | Original                        | Personalized Version                          |
+|--------------------|----------------------------------|-----------------------------------------------|
+| 💻 Runtime          | SQL-only, manual execution       | Automated with **PySpark + Docker**           |
+| 🔄 Load Method      | SQL scripts only                | **PySpark ETL scripts** with modular control  |
+| 🧪 Validation       | Basic checks on Bronze          | **Post-load validations in Silver**, error logs |
+| 📊 Modeling         | Basic views                     | **Star schema modeling** in Gold layer with Materialized views and indexes for query performance        |
+| 🐳 Environment      | Microsoft SQL only      | Full **Docker Compose** with Spark and Postgres |
 
-| Layer   | Description                              | Transformation                           | Object Type | Load Type      |
-|---------|------------------------------------------|------------------------------------------|-------------|----------------|
-| Bronze  | Raw ingested data from external sources  | None (as-is from source)                 | Tables      | Full (T&I)     |
-| Silver  | Cleaned and standardized data            | Cleaning, normalization, enrichment      | Tables      | Full (T&I)     |
-| Gold    | Business-ready analytical data           | Integration, Aggregation, Business Logic | Views       | Full (T&I)     |
+---
+
+## 🚀 Key Features & Highlights
+
+- 🧱 Implements full Medallion Architecture (Bronze → Silver → Gold)
+- 🔁 End-to-end pipeline using **PySpark** for ingestion and PostgreSQL for storage
+- 🧼 Cleansing, enrichment, and standardization in Silver; integrated business logic in Gold
+- 🧪 Post-load validation strategy with `load_log` and `data_validation_logs` tables
+- 🔍 Quality checks and logging at multiple stages (nulls, PKs, type mismatches)
+- 📁 Modular SQL structure by layer: `bronze/`, `silver/`, `gold/`
+- 🐳 Fully containerized setup with **Docker Compose (Spark + PostgreSQL)**
+- 📚 Git-based versioning and detailed documentation (catalog, flow, model, naming)
+
+---
+
+## 🧰 Tech Stack
+
+| Layer        | Technology                         |
+|--------------|-------------------------------------|
+| Ingestion    | PySpark                             |
+| Database     | PostgreSQL (via Docker container)   |
+| Data Layer   | Medallion Architecture              |
+| Monitoring   | Custom `silver.load_log` and `monitoring.data_validation_logs` table      |
+| Deployment   | Docker, Docker Compose              |
+| Scripting    | SQL, Python                         |
 
 ---
 
@@ -50,27 +76,15 @@ The project includes all stages of a modern data pipeline: from **requirement an
 
 ---
 
-## ⚙️ Key Features
+## 📐 Architecture Overview
 
-- 🔁 Full end-to-end pipeline using PySpark + PostgreSQL
-- 🔍 Validation at ingestion and cleansing stages
-- 🧼 Enrichment and transformation for analytics readiness
-- 🧪 Row-level quality checks, logging, and exception tracking
-- 🐳 Dockerized setup with modular SQL + Python
-- 📚 Git-based versioning and documentation of data models and flows
+### Medallion Layers
 
----
-
-## 🧰 Tech Stack
-
-| Layer        | Technology                         |
-|--------------|-------------------------------------|
-| Ingestion    | PySpark, SQLAlchemy                 |
-| Database     | PostgreSQL (via Docker container)   |
-| Data Layer   | Medallion Architecture              |
-| Monitoring   | Custom `silver.load_log` table      |
-| Deployment   | Docker, Docker Compose              |
-| Scripting    | SQL, Python                         |
+| Layer   | Description                              | Transformation                           | Object Type | Load Type      |
+|---------|------------------------------------------|------------------------------------------|-------------|----------------|
+| Bronze  | Raw ingested data from external sources  | None (as-is from source)                 | Tables      | Full (T&I)     |
+| Silver  | Cleaned and standardized data            | Cleaning, normalization, enrichment      | Tables      | Full (T&I)     |
+| Gold    | Business-ready analytical data           | Integration, Aggregation, Business Logic | Views       | Full (T&I)     |
 
 ---
 
@@ -87,33 +101,64 @@ The project includes all stages of a modern data pipeline: from **requirement an
   - Detect nulls or duplicates in primary keys
   - Check for invalid or inconsistent values
   - Identify transformation or enrichment issues
-- Logs quality issues and failed rows into `load_log`
+- Logs quality issues and failed rows into `load_log` and `data_validation_logs` tables
 - All transformations are still handled (cleaning, standardizing, enriching)
-- `03_create_load_procedures.sql` and `05_run_pipeline.sql` handle loading and validation
 
 ### 🥇 Gold Layer
-- Business objects created via SQL Views
+- Business objects created via SQL Materialized Views
 - Combines multiple silver tables into analytical dimensions and facts
 - Aggregates, applies logic, and formats for downstream consumption
-- Includes flat models and star schemas
+- Includes flat models and **star schemas**
 - Documented in the data catalog and model flow diagram
 
 ---
 
 ## 📒 Documentation
 
-- 🧾 `docs/`: Contains data flow diagrams, entity relationships, and catalogs
-- 📘 `load_log`: Tracks ETL load status and errors
-- 📂 `sql/`: Contains modular transformation scripts for all layers
+- 📐 [docs/images/data_architecture.png](docs/images/data_architecture.png)
+- 🔁 [docs/images/data_flow.png](docs/images/data_flow.png)
+- ⭐ [docs/images/data_model.png](docs/images/data_model.png)
+- 📘 [docs/data_catalog.md](docs/data_catalog.md)
+- 🧾 [docs/naming_convention.md](docs/naming_convention.md)
 
 ---
 
-## 📌 Notes
+## 📌 Design Assumptions
 
-- All data flows are **full loads** using Truncate & Insert for simplicity
-- Bronze and Silver are implemented as **tables**; Gold is implemented as **views**
-- Constraints are deferred to Gold to avoid failures due to dirty source data
-- Use of Docker ensures consistent, reproducible environments
+- Full Load (truncate & insert) — no change tracking needed
+- SCD Type 1 — latest state only
+- No FK constraints in Silver — validations are soft, logged after loading
+- Views in Gold — transparency and flexibility
+- Dockerized for easy local testing
 
 ---
 
+### 🔐 Environment Variables
+
+This project uses a `.env` file to manage configuration and sensitive values.
+
+To get started:
+
+```bash
+# Create your local .env file from the template
+cp .env.example .env
+
+## 🏁 Getting Started
+
+```bash
+# 1. Start everything (Docker Compose will run Spark + PostgreSQL + trigger ETL)
+docker-compose up --build
+
+# 2. Run SQL validations and transformations in order
+
+# Validate Bronze Layer
+psql -f sql/bronze/00_validate_bronze_layer.sql
+
+# Run Silver Layer
+psql -f sql/silver/00_create_load_procedures.sql
+psql -f sql/silver/01_validate_silver_layer.sql
+psql -f sql/silver/02_run_silver_pipeline.sql
+
+# Create Gold Layer
+psql -f sql/gold/00_create_gold_views.sql
+psql -f sql/gold/01_create_indexes.sql
