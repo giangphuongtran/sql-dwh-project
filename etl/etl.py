@@ -119,9 +119,6 @@ spark_builder = SparkSession.builder \
     .config("spark.executor.extraJavaOptions", f"-Djava.io.tmpdir={spark_temp_dir}") \
     .config("spark.sql.warehouse", f"{spark_temp_dir}/spark-warehouse") \
     .config("spark.sql.session.local.dir", spark_temp_dir)
-    # .config("spark.driver.maxResultSize", "4g") # Uncomment and adjust for large datasets
-    # .config("spark.driver.memory", "4g") # Uncomment and adjust for memory issues
-    # .config("spark.executor.memory", "4g") # Uncomment and adjust for memory issues
     
 try:
     spark = spark_builder.getOrCreate()

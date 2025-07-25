@@ -13,10 +13,10 @@ COPY etl/etl.py /app/etl.py
 RUN mkdir -p /opt/jars \
     && wget -O /opt/jars/postgresql-42.6.0.jar https://jdbc.postgresql.org/download/postgresql-42.6.0.jar
 
-# Ensure JAVA_TOOL_OPTIONS is set for all JVM processes to use /tmp/spark-temp
-ENV JAVA_TOOL_OPTIONS="-Djava.io.tmpdir=/tmp/spark-temp"
-
 # Explicitly ensure /tmp/spark-temp exists and is writable
 RUN mkdir -p /tmp/spark-temp && chmod 777 /tmp/spark-temp
+
+# Ensure JAVA_TOOL_OPTIONS is set for all JVM processes to use /tmp/spark-temp
+ENV JAVA_TOOL_OPTIONS="-Djava.io.tmpdir=/tmp/spark-temp"
 
 CMD ["python", "etl.py"]
